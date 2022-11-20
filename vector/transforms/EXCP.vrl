@@ -1,0 +1,38 @@
+#Распарсим контент для события EXCP
+#Изначально все должно было парсится за один прогон... но что то регулярно идет не так. Оставлю регулярку, на случай если кто-то отладит ее
+#(process=(?P<Process>[^,]*))?(,p:processName=(?P<ProcessName>[^,]*))?(,p:processName=(?P<ProcessName2>[^,]*))?(,OSThread=(?P<OSThread>\d*))?(,(C|t\:c)lientID=(?P<ClientID>\d*))?(,t:applicationName=(?P<ApplicationName>[^,]*))?(,t:computerName=(?P<ComputerName>[^,]*))?(,t:connectID=(?P<ConnectID>\d*))?(,SessionID=(?P<SessionID>\d*))?(,Usr=(?P<User>[^,]*))?(,DBMS=(?P<DBMS>[^,]*))?(,DataBase=(?P<DataBase>[^,]*))?(,dbpid=(?P<dbpid>\d*))?(,Exception=(?P<Exception>[^,]*))?,Descr=(\\"|\')(?P<Description>(.|\n|\r)*)(\\"|\')
+Process, err = parse_regex(.Content, r'process=(?P<Process>[^,]*)', numeric_groups: false)                                          
+. = merge(., Process)
+ProcessName, err = parse_regex(.Content, r'p:processName=(?P<ProcessName>[^,]*)', numeric_groups: false)                                          
+. = merge(., ProcessName)
+OSThread, err = parse_regex(.Content, r'OSThread=(?P<OSThread>\d*)', numeric_groups: false)                                          
+. = merge(., OSThread)
+ClientID, err = parse_regex(.Content, r'(C|t:c)lientID=(?P<ClientID>\d*)', numeric_groups: false)                                          
+. = merge(., ClientID)
+ApplicationName, err = parse_regex(.Content, r't:applicationName=(?P<ApplicationName>[^,]*)', numeric_groups: false)                                          
+. = merge(., ApplicationName)
+ComputerName, err = parse_regex(.Content, r't:computerName=(?P<ComputerName>[^,]*)', numeric_groups: false)                                          
+. = merge(., ComputerName)
+ConnectID, err = parse_regex(.Content, r't:connectID=(?P<ConnectID>\d*)', numeric_groups: false)                                          
+. = merge(., ConnectID)
+SessionID, err = parse_regex(.Content, r'SessionID=(?P<SessionID>\d*)', numeric_groups: false)                                          
+. = merge(., SessionID)
+User, err = parse_regex(.Content, r'Usr=(?P<User>[^,]*)', numeric_groups: false)                                          
+. = merge(., User)
+DBMS, err = parse_regex(.Content, r'DBMS=(?P<DBMS>[^,]*)', numeric_groups: false)                                          
+. = merge(., DBMS)
+DataBase, err = parse_regex(.Content, r'DataBase=(?P<DataBase>[^,]*)', numeric_groups: false)                                          
+. = merge(., DataBase)
+dbpid, err = parse_regex(.Content, r'dbpid=(?P<dbpid>\d*)', numeric_groups: false)                                          
+. = merge(., dbpid)
+Exception, err = parse_regex(.Content, r'Exception=(?P<Exception>[^,]*)', numeric_groups: false)                                          
+. = merge(., Exception)
+Description, errDescr = parse_regex(.Content, r'Descr=(?P<Description>(.|\n|\r)*)(,Context=)', numeric_groups: false)  
+if errDescr != null {
+    Description, err = parse_regex(.Content, r'Descr=(?P<Description>(.|\n|\r)*)$', numeric_groups: false)                                   
+}else{
+     Context, err = parse_regex(.Content, r'Context=(?P<Context>(.|\n|\r)*)$', numeric_groups: false)                                          
+    . = merge(., Context)
+}
+. = merge(., Description)
+.err = err

@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  vector:
+    image: timberio/vector:latest-alpine
+    hostname: vector
+    container_name: vector
+    restart: always
+    volumes:
+      - ./vector:/etc/vector/
+      - ./ERROR_EXCP:/var/log/ERROR_EXCP
+      - ./tmp:/tmp
+    ports:
+      - 8686:8686

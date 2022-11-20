@@ -1,0 +1,82 @@
+#vector.toml
+[sources.input_logs]
+  type = "file"
+  include = ['''/var/log/ERROR_EXCP/**/*.log''']
+  data_dir =  '''/var/lib/vector'''
+  fingerprint.strategy = "device_and_inode"
+  multiline.timeout_ms = 1000
+  multiline.mode = "halt_before"
+  multiline.start_pattern = ''
+  multiline.condition_pattern = '[0-5]{1}\d:[0-5]{1}\d.'
+
+[transforms.remap_logs]
+inputs = ["input_logs"]
+type = "remap"
+source = '''
+#Выделим основные свойства для фильтрации
+structured, err = parse_regex(.message, r'(?P<DateTime>\d{2}:\d{2}.\d{6})-(?P<duration>\d+),(?P<Event>[a-zA-Z]+),(?P<Level>\d{1}),(?P<Content>(.|\n|\r)*)', numeric_groups: false)                                          
+. = merge(., structured)
+date, errDateGet = parse_regex(.file,r'(?P<Date>(\d)+).log', numeric_groups: false) 
+if errDateGet==null {
+	.DateTime, errEventTimestamp = parse_timestamp((to_string(date.Date) + to_string(.DateTime)), "%y%m%d%H%M:%S.%f")
+}
+
+
+.err = err
+'''
+
+[transforms.filter_EXCP] 
+  inputs = ["remap_logs"]
+  type = "filter"
+  condition = '.Event == "EXCP"'
+
+[transforms.EXCP]
+inputs = ["filter_EXCP"]
+type = "remap"
+file = "/etc/vector/transforms/EXCP.vrl"
+
+[transforms.filter_EXCPCNTX] 
+  inputs = ["remap_logs"]
+  type = "filter"
+  condition = '.Event == "EXCPCNTX"'
+
+[transforms.EXCPCNTX]
+inputs = ["filter_EXCPCNTX"]
+type = "remap"
+file = "/etc/vector/transforms/EXCPCNTX.vrl"
+
+[transforms.filter_other] 
+  inputs = ["remap_logs"]
+  type = "filter"
+  condition = '.Event != "EXCPCNTX" && .Event != "EXCP" '
+
+
+[sinks.EXCP_json_out]
+type = "file"
+inputs = [ "EXCP" ]
+compression = "none"
+path = "/tmp/excp/EXCP-%Y-%m-%d %H:%M.json"
+
+  
+  [sinks.EXCP_json_out.encoding]
+  codec = "json"
+
+[sinks.EXCPCNTX_json_out]
+type = "file"
+inputs = [ "EXCPCNTX" ]
+compression = "none"
+path = "/tmp/excpcntx/EXCPCNTX-%Y-%m-%d %H:%M.json"
+
+
+  [sinks.EXCPCNTX_json_out.encoding]
+  codec = "json"
+
+[sinks.other_json_out]
+type = "file"
+inputs = [ "filter_other" ]
+compression = "none"
+path = "/tmp/other/EXCPCNTX-%Y-%m-%d %H:%M.json"
+
+
+  [sinks.other_json_out.encoding]
+  codec = "json"
