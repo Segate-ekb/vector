@@ -1,0 +1,17 @@
+
+#Выделим основные свойства для фильтрации
+structured, err = parse_regex(.message, r'(?P<DateTime>\d{2}:\d{2}.\d{6})-(?P<duration>\d+),(?P<Event>[a-zA-Z]+),(?P<Level>\d{1}),(?P<Content>(.|\n|\r)*)', numeric_groups: false)                                          
+. = merge(., structured)
+   
+#Дата события - это имя файла в формате "ГГММДДЧЧ"+Часть из записи"ММ:СС.миллисекунды"
+date, DateTimeErr = parse_regex(.file,r'(?P<Date>(\d)+).log', numeric_groups: false) 
+if DateTimeErr==null {
+   .DateTime, errEventTimestamp = parse_timestamp((to_string(date.Date) + to_string(.DateTime)), "%y%m%d%H%M:%S.%f")
+}
+
+   .err = err
+
+
+
+
+

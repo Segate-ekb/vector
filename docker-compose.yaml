@@ -9,7 +9,7 @@ services:
     volumes:
       - ./config:/etc/vector/
       - ./fileProgress:/var/lib/vector
-      - ./ERROR_EXCP:/var/log/logtj  #Если вдруг у вас не сетевая шара, а папка локально
+      - ./logs:/var/log/logtj  #Если вдруг у вас не сетевая шара, а папка локально
     #   - tjLogs:/var/log/tjLogs #Если вдруг у вас сервер на винде и есть просто шара
       - ./tmp:/tmp
     ports:
@@ -21,5 +21,5 @@ services:
 #    driver_opts:
 #      type: cifs    
 #      device: //{server}/tjlogs
-#      o: "username={username},password={Password},vers=3.0,uid=1000,gid=1000"
+#      o: "username={User},password={Password},domain=mfg,vers=3.0,addr={server},file_mode=0777,dir_mode=0777"
 

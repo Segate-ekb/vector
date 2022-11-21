@@ -12,18 +12,7 @@
 [transforms.remap_logs]
 inputs = ["input_logs"]
 type = "remap"
-source = '''
-#Выделим основные свойства для фильтрации
-structured, err = parse_regex(.message, r'(?P<DateTime>\d{2}:\d{2}.\d{6})-(?P<duration>\d+),(?P<Event>[a-zA-Z]+),(?P<Level>\d{1}),(?P<Content>(.|\n|\r)*)', numeric_groups: false)                                          
-. = merge(., structured)
-date, errDateGet = parse_regex(.file,r'(?P<Date>(\d)+).log', numeric_groups: false) 
-if errDateGet==null {
-	.DateTime, errEventTimestamp = parse_timestamp((to_string(date.Date) + to_string(.DateTime)), "%y%m%d%H%M:%S.%f")
-}
-
-
-.err = err
-'''
+file = "/etc/vector/transforms/parseLog.vrl"
 
 [transforms.filter_EXCP] 
   inputs = ["remap_logs"]
@@ -34,6 +23,16 @@ if errDateGet==null {
 inputs = ["filter_EXCP"]
 type = "remap"
 file = "/etc/vector/transforms/EXCP.vrl"
+
+[transforms.filter_DBMSSQL] 
+  inputs = ["remap_logs"]
+  type = "filter"
+  condition = '.Event == "DBMSSQL"'
+
+[transforms.DBMSSQL]
+inputs = ["filter_DBMSSQL"]
+type = "remap"
+file = "/etc/vector/transforms/DBMSSQL.vrl"
 
 [transforms.filter_EXCPCNTX] 
   inputs = ["remap_logs"]
@@ -48,7 +47,7 @@ file = "/etc/vector/transforms/EXCPCNTX.vrl"
 [transforms.filter_other] 
   inputs = ["remap_logs"]
   type = "filter"
-  condition = '.Event != "EXCPCNTX" && .Event != "EXCP" '
+  condition = '.Event != "EXCPCNTX" && .Event != "EXCP" && .Event != "DBMSSQL"'
 
 
 [sinks.EXCP_json_out]
@@ -61,24 +60,34 @@ path = "/tmp/excp/EXCP-%Y-%m-%d %H:%M.json"
   [sinks.EXCP_json_out.encoding]
   codec = "json"
 
-[sinks.EXCPCNTX_json_out]
+# [sinks.EXCPCNTX_json_out]
+# type = "file"
+# inputs = [ "EXCPCNTX" ]
+# compression = "none"
+# path = "/tmp/excpcntx/EXCPCNTX-%Y-%m-%d %H:%M.json"
+
+
+#   [sinks.EXCPCNTX_json_out.encoding]
+#   codec = "json"
+
+# [sinks.other_json_out]
+# type = "file"
+# inputs = [ "filter_other" ]
+# compression = "none"
+# path = "/tmp/other/EXCPCNTX-%Y-%m-%d %H:%M.json"
+
+
+#   [sinks.other_json_out.encoding]
+#   codec = "json"
+
+[sinks.DBMSSQL_json_out]
 type = "file"
-inputs = [ "EXCPCNTX" ]
+inputs = [ "DBMSSQL" ]
 compression = "none"
-path = "/tmp/excpcntx/EXCPCNTX-%Y-%m-%d %H:%M.json"
+path = "/tmp/DBMSSQL/DBMSSQL-%Y-%m-%d %H:%M.json"
 
-
-  [sinks.EXCPCNTX_json_out.encoding]
-  codec = "json"
-
-[sinks.other_json_out]
-type = "file"
-inputs = [ "filter_other" ]
-compression = "none"
-path = "/tmp/other/EXCPCNTX-%Y-%m-%d %H:%M.json"
-
-
-  [sinks.other_json_out.encoding]
+  
+  [sinks.DBMSSQL_json_out.encoding]
   codec = "json"
 
 #[sinks.cl_excp]

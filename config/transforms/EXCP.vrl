@@ -27,12 +27,9 @@ dbpid, err = parse_regex(.Content, r'dbpid=(?P<dbpid>\d*)', numeric_groups: fals
 . = merge(., dbpid)
 Exception, err = parse_regex(.Content, r'Exception=(?P<Exception>[^,]*)', numeric_groups: false)                                          
 . = merge(., Exception)
-Description, errDescr = parse_regex(.Content, r'Descr=(?P<Description>(.|\n|\r)*)(,Context=)', numeric_groups: false)  
-if errDescr != null {
-    Description, err = parse_regex(.Content, r'Descr=(?P<Description>(.|\n|\r)*)$', numeric_groups: false)                                   
-}
+Description, errDescr = parse_regex(.Content, r'Descr=(?P<Description>(.|\n|\r)*?)(,[a-zA-Z]+=|$)', numeric_groups: false)  
 . = merge(., Description)
-Context, err = parse_regex(.Content, r'Context=(?P<Context>(.|\n|\r)*)$', numeric_groups: false)                                          
+Context, err = parse_regex(.Content, r'Context=(?P<Context>(.|\n|\r)*?)(,[a-zA-Z]+=|$)', numeric_groups: false)                                          
 . = merge(., Context)
 
 

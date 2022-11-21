@@ -43,11 +43,11 @@ Module, err = parse_regex(.Content, r'Module=(?P<Module>[^,]*)', numeric_groups:
 . = merge(., Module)
 Method, err = parse_regex(.Content, r'Method=(?P<Method>[^,]*)', numeric_groups: false)                                          
 . = merge(., Method)
-Sdbl, err = parse_regex(.Content, r'Sdbl=(?P<Sdbl>(.|\n|\r)*)$', numeric_groups: false)                                          
+Sdbl, err = parse_regex(.Content, r'Sdbl=(?P<Sdbl>(.|\n|\r)*?)(,[a-zA-Z]+=|$)', numeric_groups: false)                                          
 . = merge(., Sdbl)
 CallID, err = parse_regex(.Content, r'CallID=(?P<CallID>[^,]*)', numeric_groups: false)                                          
 . = merge(., CallID)
-Context, err = parse_regex(.Content, r'Context=(?P<Context>(.|\n|\r)*)$', numeric_groups: false)                                          
+Context, err = parse_regex(.Content, r'Context=(?P<Context>(.|\n|\r)*?)(,[a-zA-Z]+=|$)', numeric_groups: false)                                          
 . = merge(., Context)
 
 

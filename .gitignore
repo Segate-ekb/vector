@@ -1,2 +1,3 @@
 /tmp/**
-/ERROR_EXCP/**
+/**/*.log
+/flieProgress/**
