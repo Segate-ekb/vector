@@ -1,7 +1,7 @@
 #vector.toml
 [sources.input_logs]
   type = "file"
-  include = ['''/var/log/ERROR_EXCP/**/*.log''']
+  include = ['''/var/log/logtj/**/*.log''']
   data_dir =  '''/var/lib/vector'''
   fingerprint.strategy = "device_and_inode"
   multiline.timeout_ms = 1000
@@ -81,17 +81,17 @@ path = "/tmp/other/EXCPCNTX-%Y-%m-%d %H:%M.json"
   [sinks.other_json_out.encoding]
   codec = "json"
 
-  [sinks.cl_excp]
-  type = "clickhouse"
-  inputs = ["EXCP"]
-  endpoint = '''192.168.1.53:8123'''
-  auth.strategy = "basic"
-  auth.user = '''default'''
-  auth.password = ''''''
-  database = '''tj'''
-  table = '''excp'''
-  skip_unknown_fields = true
-  encoding.timestamp_format = "unix"
-  batch.max_events = 10000
-  batch.timeout_secs = 5
-  acknowledgements.enabled = true
+#[sinks.cl_excp]
+#  type = "clickhouse"
+#  inputs = ["EXCP"]
+#  endpoint = '''192.168.1.53:8123'''
+#  auth.strategy = "basic"
+#  auth.user = '''default'''
+#  auth.password = ''''''
+#  database = '''tj'''
+#  table = '''excp'''
+#  skip_unknown_fields = true
+#  encoding.timestamp_format = "unix"
+#  batch.max_events = 10000
+#  batch.timeout_secs = 5
+#  acknowledgements.enabled = true

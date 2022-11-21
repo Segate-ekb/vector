@@ -7,8 +7,19 @@ services:
     container_name: vector
     restart: always
     volumes:
-      - ./vector:/etc/vector/
-      - ./ERROR_EXCP:/var/log/ERROR_EXCP
+      - ./config:/etc/vector/
+      - ./fileProgress:/var/lib/vector
+      - ./ERROR_EXCP:/var/log/logtj  #Если вдруг у вас не сетевая шара, а папка локально
+    #   - tjLogs:/var/log/tjLogs #Если вдруг у вас сервер на винде и есть просто шара
       - ./tmp:/tmp
     ports:
       - 8686:8686
+
+#volumes:
+#  cifs_mount:
+#    driver: local
+#    driver_opts:
+#      type: cifs    
+#      device: //{server}/tjlogs
+#      o: "username={username},password={Password},vers=3.0,uid=1000,gid=1000"
+
