@@ -1,4 +1,4 @@
-#vector.toml
+# Чтение из файлов.
 [sources.input_logs]
   type = "file"
   include = ['''/var/log/logtj/**/*.log''']
@@ -9,11 +9,17 @@
   multiline.start_pattern = ''
   multiline.condition_pattern = '[0-5]{1}\d:[0-5]{1}\d.'
 
+# Базовая трансформация, выделение вида события, длительности и тд. 
 [transforms.remap_logs]
 inputs = ["input_logs"]
 type = "remap"
 file = "/etc/vector/transforms/parseLog.vrl"
 
+# СЕКЦИЯ СОБЫТИЙ
+# Каждое событие ТЖ обрабатывается отдельно 
+# Для обработки необходимо создать фильтр по событию и ремап со ссылкой на vrl файл c описанием транформации
+
+# Событие EXCP
 [transforms.filter_EXCP] 
   inputs = ["remap_logs"]
   type = "filter"
@@ -24,16 +30,7 @@ inputs = ["filter_EXCP"]
 type = "remap"
 file = "/etc/vector/transforms/EXCP.vrl"
 
-[transforms.filter_DBMSSQL] 
-  inputs = ["remap_logs"]
-  type = "filter"
-  condition = '.Event == "DBMSSQL"'
-
-[transforms.DBMSSQL]
-inputs = ["filter_DBMSSQL"]
-type = "remap"
-file = "/etc/vector/transforms/DBMSSQL.vrl"
-
+# Событие EXCPCNTX
 [transforms.filter_EXCPCNTX] 
   inputs = ["remap_logs"]
   type = "filter"
@@ -44,12 +41,26 @@ inputs = ["filter_EXCPCNTX"]
 type = "remap"
 file = "/etc/vector/transforms/EXCPCNTX.vrl"
 
+# Событие EXCPCNTX
+[transforms.filter_DBMSSQL] 
+  inputs = ["remap_logs"]
+  type = "filter"
+  condition = '.Event == "DBMSSQL"'
+
+[transforms.DBMSSQL]
+inputs = ["filter_DBMSSQL"]
+type = "remap"
+file = "/etc/vector/transforms/DBMSSQL.vrl"
+
+# Все остальные события
 [transforms.filter_other] 
   inputs = ["remap_logs"]
   type = "filter"
   condition = '.Event != "EXCPCNTX" && .Event != "EXCP" && .Event != "DBMSSQL"'
 
-
+# СЕКЦИЯ ВЫВОДА ДАННЫХ
+# В данной секции описываются все используемые методы вывода обработанных логов
+# 
 [sinks.EXCP_json_out]
 type = "file"
 inputs = [ "EXCP" ]
@@ -58,36 +69,6 @@ path = "/tmp/excp/EXCP-%Y-%m-%d %H:%M.json"
 
   
   [sinks.EXCP_json_out.encoding]
-  codec = "json"
-
-# [sinks.EXCPCNTX_json_out]
-# type = "file"
-# inputs = [ "EXCPCNTX" ]
-# compression = "none"
-# path = "/tmp/excpcntx/EXCPCNTX-%Y-%m-%d %H:%M.json"
-
-
-#   [sinks.EXCPCNTX_json_out.encoding]
-#   codec = "json"
-
-# [sinks.other_json_out]
-# type = "file"
-# inputs = [ "filter_other" ]
-# compression = "none"
-# path = "/tmp/other/EXCPCNTX-%Y-%m-%d %H:%M.json"
-
-
-#   [sinks.other_json_out.encoding]
-#   codec = "json"
-
-[sinks.DBMSSQL_json_out]
-type = "file"
-inputs = [ "DBMSSQL" ]
-compression = "none"
-path = "/tmp/DBMSSQL/DBMSSQL-%Y-%m-%d %H:%M.json"
-
-  
-  [sinks.DBMSSQL_json_out.encoding]
   codec = "json"
 
 #[sinks.cl_excp]
