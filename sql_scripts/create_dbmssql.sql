@@ -1,5 +1,6 @@
 CREATE TABLE <databaseName>.dbmssql(`DateTime` DateTime,
                                   `duration` Int32,
+                                  `ProcessID` Int32,
                                   `Level` Int32,
                                   `ProcessName` String,
                                   `ConnectID` Int32,
