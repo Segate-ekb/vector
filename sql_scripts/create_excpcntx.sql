@@ -1,4 +1,4 @@
-CREATE TABLE tjournal.excpcntx(`DateTime` DateTime,
+CREATE TABLE <databaseName>.excpcntx(`DateTime` DateTime,
                                   `duration` Int32,
                                   `Level` Int32,
                                   `ClientComputerName` String,

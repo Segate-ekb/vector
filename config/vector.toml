@@ -15,13 +15,20 @@ inputs = ["input_logs"]
 type = "remap"
 file = "/etc/vector/transforms/parseLog.vrl"
 
-# СЕКЦИЯ СОБЫТИЙ
-# Каждое событие ТЖ обрабатывается отдельно 
-# Для обработки необходимо создать фильтр по событию и ремап со ссылкой на vrl файл c описанием транформации
+# Отфильтруем только требуемые события
+[transforms.filter_EVENT_LIST] 
+  inputs = ["remap_logs"]
+  type = "filter"
+  condition = 'contains(${EVENT_LIST}, to_string!(.Event))'
+
+#################################### СЕКЦИЯ СОБЫТИЙ ##########################################################
+# Каждое событие ТЖ обрабатывается отдельно                                                                  #
+# Для обработки необходимо создать фильтр по событию и ремап со ссылкой на vrl файл c описанием транформации #
+##############################################################################################################
 
 # Событие EXCP
 [transforms.filter_EXCP] 
-  inputs = ["remap_logs"]
+  inputs = ["filter_EVENT_LIST"]
   type = "filter"
   condition = '.Event == "EXCP"'
 
@@ -32,7 +39,7 @@ file = "/etc/vector/transforms/EXCP.vrl"
 
 # Событие EXCPCNTX
 [transforms.filter_EXCPCNTX] 
-  inputs = ["remap_logs"]
+  inputs = ["filter_EVENT_LIST"]
   type = "filter"
   condition = '.Event == "EXCPCNTX"'
 
@@ -41,9 +48,9 @@ inputs = ["filter_EXCPCNTX"]
 type = "remap"
 file = "/etc/vector/transforms/EXCPCNTX.vrl"
 
-# Событие EXCPCNTX
+# Событие DBMSSQL
 [transforms.filter_DBMSSQL] 
-  inputs = ["remap_logs"]
+  inputs = ["filter_EVENT_LIST"]
   type = "filter"
   condition = '.Event == "DBMSSQL"'
 
@@ -52,36 +59,99 @@ inputs = ["filter_DBMSSQL"]
 type = "remap"
 file = "/etc/vector/transforms/DBMSSQL.vrl"
 
-# Все остальные события
-[transforms.filter_other] 
-  inputs = ["remap_logs"]
-  type = "filter"
-  condition = '.Event != "EXCPCNTX" && .Event != "EXCP" && .Event != "DBMSSQL"'
+# Все остальные события То что еще не обрабатывается но тоже можно заливать куда-то сырыми данными.
+# [transforms.filter_other] 
+#   inputs = ["filter_EVENT_LIST"]
+#   type = "filter"
+#   condition = '.Event != "EXCPCNTX" && .Event != "EXCP" && .Event != "DBMSSQL"'
 
-# СЕКЦИЯ ВЫВОДА ДАННЫХ
-# В данной секции описываются все используемые методы вывода обработанных логов
-# 
-[sinks.EXCP_json_out]
-type = "file"
-inputs = [ "EXCP" ]
-compression = "none"
-path = "/tmp/excp/EXCP-%Y-%m-%d %H:%M.json"
+
+######################## СЕКЦИЯ ВЫВОДА ДАННЫХ ###################################
+# В данной секции описываются все используемые методы вывода обработанных логов #
+#################################################################################
+
+#####################################
+#  Вывод результата в БД clickhouse #
+#####################################
+
+# Событие EXCP 
+[sinks.cl_excp]
+ type = "clickhouse"
+ inputs = ["EXCP"]
+ endpoint = '''${CH_SERVER}'''
+ auth.strategy = "basic"
+ auth.user = '''${CH_USER}'''
+ auth.password = '''${CH_PASSWORD}'''
+ database = '''${CH_DATABASE}'''
+ table = '''excp'''
+ skip_unknown_fields = true
+ encoding.timestamp_format = "unix"
+ batch.max_events = 10000
+ batch.timeout_secs = 5
+ acknowledgements.enabled = true
+
+ # Событие EXCPCNTX 
+[sinks.cl_EXCPCNTX]
+ type = "clickhouse"
+ inputs = ["EXCPCNTX"]
+ endpoint = '''${CH_SERVER}'''
+ auth.strategy = "basic"
+ auth.user = '''${CH_USER}'''
+ auth.password = '''${CH_PASSWORD}'''
+ database = '''${CH_DATABASE}'''
+ table = '''excpcntx'''
+ skip_unknown_fields = true
+ encoding.timestamp_format = "unix"
+ batch.max_events = 10000
+ batch.timeout_secs = 5
+ acknowledgements.enabled = true
+
+ # Событие DBMSSQL 
+[sinks.cl_DBMSSQL]
+ type = "clickhouse"
+ inputs = ["DBMSSQL"]
+ endpoint = '''${CH_SERVER}'''
+ auth.strategy = "basic"
+ auth.user = '''${CH_USER}'''
+ auth.password = '''${CH_PASSWORD}'''
+ database = '''${CH_DATABASE}'''
+ table = '''dbmssql'''
+ skip_unknown_fields = true
+ encoding.timestamp_format = "unix"
+ batch.max_events = 10000
+ batch.timeout_secs = 5
+ acknowledgements.enabled = true
+
+##################################################
+# Пример вывода результата в файл, в формате JSON#
+##################################################
+
+# [sinks.EXCP_json_out]
+# type = "file"
+# inputs = [ "EXCP" ]
+# compression = "none"
+# path = "/tmp/EXCP/%Y-%m-%d %H:%M.json"
 
   
-  [sinks.EXCP_json_out.encoding]
-  codec = "json"
+#   [sinks.EXCP_json_out.encoding]
+#   codec = "json"
 
-#[sinks.cl_excp]
-#  type = "clickhouse"
-#  inputs = ["EXCP"]
-#  endpoint = '''192.168.1.53:8123'''
-#  auth.strategy = "basic"
-#  auth.user = '''default'''
-#  auth.password = ''''''
-#  database = '''tj'''
-#  table = '''excp'''
-#  skip_unknown_fields = true
-#  encoding.timestamp_format = "unix"
-#  batch.max_events = 10000
-#  batch.timeout_secs = 5
-#  acknowledgements.enabled = true
+# [sinks.EXCPCNTX_json_out]
+# type = "file"
+# inputs = [ "EXCPCNTX" ]
+# compression = "none"
+# path = "/tmp/EXCPCNTX/%Y-%m-%d %H:%M.json"
+
+  
+#   [sinks.EXCPCNTX_json_out.encoding]
+#   codec = "json"
+
+#   [sinks.DBMSSQL_json_out]
+# type = "file"
+# inputs = [ "DBMSSQL" ]
+# compression = "none"
+# path = "/tmp/DBMSSQL/%Y-%m-%d %H:%M.json"
+
+  
+#   [sinks.DBMSSQL_json_out.encoding]
+#   codec = "json"

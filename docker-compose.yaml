@@ -3,23 +3,24 @@ version: '3'
 services:
   vector:
     image: timberio/vector:latest-alpine
-    hostname: vector
-    container_name: vector
+    env_file:
+      - ./techJournal.env
+    hostname: vector_techJournal
+    container_name: vector_techJournal
     restart: always
     volumes:
       - ./config:/etc/vector/
       - ./fileProgress:/var/lib/vector
-      - ./logs:/var/log/logtj  #Если вдруг у вас не сетевая шара, а папка локально
-    #   - tjLogs:/var/log/tjLogs #Если вдруг у вас сервер на винде и есть просто шара
+      - ./logs:/var/log/tjLogs
+      # - tjLogs:/var/log/tjLogs 
       - ./tmp:/tmp
     ports:
       - 8686:8686
 
-#volumes:
-#  cifs_mount:
-#    driver: local
-#    driver_opts:
-#      type: cifs    
-#      device: //{server}/tjlogs
-#      o: "username={User},password={Password},domain=mfg,vers=3.0,addr={server},file_mode=0777,dir_mode=0777"
-
+#  volumes:
+#    tjLogs:
+#      driver: local
+#      driver_opts:   
+#       type: cifs    
+#       device: //{server}/tjlogs
+#       o: "username={User},password={Password},domain=mfg,vers=3.0,addr={server},file_mode=0777,dir_mode=0777"

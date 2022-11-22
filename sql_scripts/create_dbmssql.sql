@@ -1,4 +1,4 @@
-CREATE TABLE tjournal.dbmssql(`DateTime` DateTime,
+CREATE TABLE <databaseName>.dbmssql(`DateTime` DateTime,
                                   `duration` Int32,
                                   `Level` Int32,
                                   `ProcessName` String,

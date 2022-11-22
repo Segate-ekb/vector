@@ -1,4 +1,4 @@
-CREATE TABLE tjournal.excp(`DateTime` DateTime,
+CREATE TABLE <databaseName>.excp(`DateTime` DateTime,
                                   `duration` Int32,
                                   `Level` Int32,
                                   `Process` String,
