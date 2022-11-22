@@ -8,8 +8,11 @@ date, DateTimeErr = parse_regex(.file,r'(?P<Date>(\d)+).log', numeric_groups: fa
 if DateTimeErr==null {
    .DateTime, errEventTimestamp = parse_timestamp((to_string(date.Date) + to_string(.DateTime)), "%y%m%d%H%M:%S.%f")
 }
+# Получим PID процесса, и зафиксируем его.
+PID, DateTimeErr = parse_regex(.file,r'/(.*)_(?P<ProcessID>\d+)/\d*.log', numeric_groups: false) 
+. = merge(., PID)
 
-   .err = err
+.err = err
 
 
 
