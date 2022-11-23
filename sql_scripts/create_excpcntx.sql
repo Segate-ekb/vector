@@ -26,5 +26,7 @@ CREATE TABLE <databaseName>.excpcntx(`DateTime` DateTime64(6),
                                   `Method` String,
                                   `Sdbl` String,
                                   `CallID` Int32,
-                                  `Context` String) ENGINE = MergeTree() PARTITION BY toYYYYMM(DateTime)
+                                  `Context` String,
+                                  `message` String,
+                                  `file` String) ENGINE = MergeTree() PARTITION BY toYYYYMM(DateTime)
 ORDER BY (DateTime);

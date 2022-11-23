@@ -16,5 +16,7 @@ CREATE TABLE <databaseName>.excp(`DateTime` DateTime64(6),
                                   `dbpid` Int32,
                                   `Exception` String,
                                   `Description` String,
-                                  `Context` String) ENGINE = MergeTree() PARTITION BY toYYYYMM(DateTime)
+                                  `Context` String,
+                                  `message` String,
+                                  `file` String) ENGINE = MergeTree() PARTITION BY toYYYYMM(DateTime)
 ORDER BY (DateTime);

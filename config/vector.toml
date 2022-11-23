@@ -184,7 +184,7 @@ file = "/etc/vector/transforms/TDEADLOCK.vrl"
  acknowledgements.enabled = true
 
 # Событие TLOCK 
-[sinks.cl_SDBL]
+[sinks.cl_TLOCK]
  type = "clickhouse"
  inputs = ["TLOCK"]
  endpoint = '''${CH_SERVER}'''

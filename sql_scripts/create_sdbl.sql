@@ -1,13 +1,11 @@
-CREATE TABLE <databaseName>.dbmssql(`DateTime` DateTime64(6),
+CREATE TABLE <databaseName>.sdbl(`DateTime` DateTime64(6),
                                   `duration` Int32,
                                   `ProcessID` Int32,
                                   `Level` Int32,
                                   `ProcessName` String,
+                                  `ComputerName` String,
                                   `ConnectID` Int32,
                                   `User` String,
-                                  `dbpid` Int32,
-                                --   `Sql` String, здоровенные куски текста
-                                --   `planSQLText` String, здоровенные куски текста
                                   `Context` String,
                                   `message` String,
                                   `file` String) ENGINE = MergeTree() PARTITION BY toYYYYMM(DateTime)
