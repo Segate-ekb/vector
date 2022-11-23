@@ -1,4 +1,4 @@
-CREATE TABLE <databaseName>.dbmssql(`DateTime` DateTime,
+CREATE TABLE <databaseName>.dbmssql(`DateTime` DateTime64(6),
                                   `duration` Int32,
                                   `ProcessID` Int32,
                                   `Level` Int32,

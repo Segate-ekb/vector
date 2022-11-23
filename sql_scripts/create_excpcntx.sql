@@ -1,4 +1,4 @@
-CREATE TABLE <databaseName>.excpcntx(`DateTime` DateTime,
+CREATE TABLE <databaseName>.excpcntx(`DateTime` DateTime64(6),
                                   `duration` Int32,
                                   `Level` Int32,
                                   `ClientComputerName` String,

@@ -1,4 +1,4 @@
-CREATE TABLE <databaseName>.excp(`DateTime` DateTime,
+CREATE TABLE <databaseName>.excp(`DateTime` DateTime64(6),
                                   `duration` Int32,
                                   `Level` Int32,
                                   `Process` String,
