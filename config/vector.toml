@@ -59,6 +59,51 @@ inputs = ["filter_DBMSSQL"]
 type = "remap"
 file = "/etc/vector/transforms/DBMSSQL.vrl"
 
+# Событие SDBL
+[transforms.filter_SDBL] 
+  inputs = ["filter_EVENT_LIST"]
+  type = "filter"
+  condition = '.Event == "SDBL"'
+
+[transforms.SDBL]
+inputs = ["filter_SDBL"]
+type = "remap"
+file = "/etc/vector/transforms/SDBL.vrl"
+
+# Событие TLOCK
+[transforms.filter_TLOCK] 
+  inputs = ["filter_EVENT_LIST"]
+  type = "filter"
+  condition = '.Event == "TLOCK"'
+
+[transforms.TLOCK]
+inputs = ["filter_TLOCK"]
+type = "remap"
+file = "/etc/vector/transforms/TLOCK.vrl"
+
+# Событие TTIMEOUT
+[transforms.filter_TTIMEOUT] 
+  inputs = ["filter_EVENT_LIST"]
+  type = "filter"
+  condition = '.Event == "TTIMEOUT"'
+
+[transforms.TTIMEOUT]
+inputs = ["filter_TTIMEOUT"]
+type = "remap"
+file = "/etc/vector/transforms/TTIMEOUT.vrl"
+
+# Событие TDEADLOCK
+[transforms.filter_TDEADLOCK] 
+  inputs = ["filter_EVENT_LIST"]
+  type = "filter"
+  condition = '.Event == "TDEADLOCK"'
+
+[transforms.TDEADLOCK]
+inputs = ["filter_TDEADLOCK"]
+type = "remap"
+file = "/etc/vector/transforms/TDEADLOCK.vrl"
+
+
 # Все остальные события То что еще не обрабатывается но тоже можно заливать куда-то сырыми данными.
 # [transforms.filter_other] 
 #   inputs = ["filter_EVENT_LIST"]
@@ -121,6 +166,71 @@ file = "/etc/vector/transforms/DBMSSQL.vrl"
  batch.max_events = 10000
  batch.timeout_secs = 5
  acknowledgements.enabled = true
+
+# Событие SDBL 
+[sinks.cl_SDBL]
+ type = "clickhouse"
+ inputs = ["SDBL"]
+ endpoint = '''${CH_SERVER}'''
+ auth.strategy = "basic"
+ auth.user = '''${CH_USER}'''
+ auth.password = '''${CH_PASSWORD}'''
+ database = '''${CH_DATABASE}'''
+ table = '''sdbl'''
+ skip_unknown_fields = true
+ encoding.timestamp_format = "unix"
+ batch.max_events = 10000
+ batch.timeout_secs = 5
+ acknowledgements.enabled = true
+
+# Событие TLOCK 
+[sinks.cl_SDBL]
+ type = "clickhouse"
+ inputs = ["TLOCK"]
+ endpoint = '''${CH_SERVER}'''
+ auth.strategy = "basic"
+ auth.user = '''${CH_USER}'''
+ auth.password = '''${CH_PASSWORD}'''
+ database = '''${CH_DATABASE}'''
+ table = '''tlock'''
+ skip_unknown_fields = true
+ encoding.timestamp_format = "unix"
+ batch.max_events = 10000
+ batch.timeout_secs = 5
+ acknowledgements.enabled = true
+
+ # Событие TTIMEOUT 
+[sinks.cl_TTIMEOUT]
+ type = "clickhouse"
+ inputs = ["TTIMEOUT"]
+ endpoint = '''${CH_SERVER}'''
+ auth.strategy = "basic"
+ auth.user = '''${CH_USER}'''
+ auth.password = '''${CH_PASSWORD}'''
+ database = '''${CH_DATABASE}'''
+ table = '''ttimeout'''
+ skip_unknown_fields = true
+ encoding.timestamp_format = "unix"
+ batch.max_events = 10000
+ batch.timeout_secs = 5
+ acknowledgements.enabled = true
+
+ # Событие TDEADLOCK 
+[sinks.cl_TDEADLOCK]
+ type = "clickhouse"
+ inputs = ["TDEADLOCK"]
+ endpoint = '''${CH_SERVER}'''
+ auth.strategy = "basic"
+ auth.user = '''${CH_USER}'''
+ auth.password = '''${CH_PASSWORD}'''
+ database = '''${CH_DATABASE}'''
+ table = '''tdeadlock'''
+ skip_unknown_fields = true
+ encoding.timestamp_format = "unix"
+ batch.max_events = 10000
+ batch.timeout_secs = 5
+ acknowledgements.enabled = true
+
 
 ##################################################
 # Пример вывода результата в файл, в формате JSON#

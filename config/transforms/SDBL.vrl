@@ -1,4 +1,4 @@
-#Распарсим контент для события DBMSSQL
+#Распарсим контент для события SDBL
 ProcessName, err = parse_regex(.Content, r'p:processName=(?P<ProcessName>[^,]*)', numeric_groups: false)                                          
 . = merge(., ProcessName)
 ComputerName, err = parse_regex(.Content, r't:computerName=(?P<ComputerName>[^,]*)', numeric_groups: false)                                          
@@ -7,12 +7,6 @@ ConnectID, err = parse_regex(.Content, r't:connectID=(?P<ConnectID>\d*)', numeri
 . = merge(., ConnectID)
 User, err = parse_regex(.Content, r'Usr=(?P<User>[^,]*)', numeric_groups: false)                                          
 . = merge(., User)
-dbpid, err = parse_regex(.Content, r'dbpid=(?P<dbpid>\d*)', numeric_groups: false)                                          
-. = merge(., dbpid)
-Sql, err = parse_regex(.Content, r'Sql=(?P<Sql>(.|\n|\r)*?)(,[a-zA-Z]+=|$)', numeric_groups: false)                                          
-. = merge(., Sql)
-planSQLText, err = parse_regex(.Content, r'planSQLText=(?P<planSQLText>(.|\n|\r)*?)(,[a-zA-Z]+=|$)', numeric_groups: false)                                          
-. = merge(., planSQLText)
 Context, err = parse_regex(.Content, r'Context=(?P<Context>(.|\n|\r)*?)(,[a-zA-Z]+=|$)', numeric_groups: false)                                          
 . = merge(., Context)
 

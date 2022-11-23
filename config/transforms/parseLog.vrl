@@ -6,7 +6,7 @@ structured, err = parse_regex(.message, r'(?P<DateTime>\d{2}:\d{2}.\d{6})-(?P<du
 #Дата события - это имя файла в формате "ГГММДДЧЧ"+Часть из записи"ММ:СС.миллисекунды"
 date, DateTimeErr = parse_regex(.file,r'(?P<Date>(\d)+).log', numeric_groups: false) 
 if DateTimeErr==null {
-   .DateTime, errEventTimestamp = parse_timestamp((to_string(date.Date) + to_string(.DateTime)), "%y%m%d%H%M:%S.%f")
+   .DateTime, errEventTimestamp = parse_timestamp((to_string(date.Date) + to_string(.DateTime)+"+0300"), "%y%m%d%H%M:%S.%6f%z")
 }
 # Получим PID процесса, и зафиксируем его.
 PID, DateTimeErr = parse_regex(.file,r'/(.*)_(?P<ProcessID>\d+)/\d*.log', numeric_groups: false) 
