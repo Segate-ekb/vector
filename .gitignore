@@ -1,4 +1,4 @@
 /tmp/**
 /**/*.log
-/flieProgress/**
 *.env
+fileProgress/input_logs/checkpoints.json
