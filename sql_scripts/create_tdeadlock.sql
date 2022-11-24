@@ -1,4 +1,4 @@
-CREATE TABLE <databaseName>.tdeadlock(`DateTime` DateTime64(6),
+CREATE TABLE <databaseName>.tdeadlock(`DateTime` DateTime64(6,'Europe/Moscow'),
                                   `duration` Int32,
                                   `Level` Int32,
                                   `Process` String,

@@ -10,7 +10,7 @@ services:
     restart: always
     volumes:
       - ./config:/etc/vector/
-      # - ./fileProgress:/var/lib/vector
+      - ./fileProgress:/var/lib/vector
       - ./logs:/var/log/logtj
       # - tjLogs:/var/log/logtj 
       - ./tmp:/tmp

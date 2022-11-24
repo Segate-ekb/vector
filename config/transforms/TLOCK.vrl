@@ -29,7 +29,7 @@ Locks, err = parse_regex(.Content, r'Locks=(?P<Locks>[^,]*)', numeric_groups: fa
 . = merge(., Locks)
 WaitConnections, err = parse_regex(.Content, r'WaitConnections=(?P<WaitConnections>[^,]*)', numeric_groups: false)                                          
 . = merge(., WaitConnections)
-Escalating, err = parse_regex(.Content, r'(E|e)scalating=(?P<Escalating>\d*)', numeric_groups: false)                                          
+Escalating, err = parse_regex(.Content, r'(E|e)scalating=(?P<Escalating>[^,]*)', numeric_groups: false)                                          
 . = merge(., Escalating)
 Durationus, err = parse_regex(.Content, r'(D|d)urationus=(?P<Durationus>\d*)', numeric_groups: false)                                          
 . = merge(., Durationus)
