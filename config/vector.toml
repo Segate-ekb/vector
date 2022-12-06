@@ -7,7 +7,7 @@
   multiline.timeout_ms = 1000
   multiline.mode = "halt_before"
   multiline.start_pattern = ''
-  multiline.condition_pattern = '[0-5]{1}\d:[0-5]{1}\d.'
+  multiline.condition_pattern = '[0-5]{1}\d:[0-5]{1}\d.\d{6}-\d*,([a-zA-Z][^o][^n][^t][^e][^x][^t])'
 
 # Базовая трансформация, выделение вида события, длительности и тд. 
 [transforms.remap_logs]
@@ -257,4 +257,14 @@ file = "/etc/vector/transforms/TDEADLOCK.vrl"
 
   
 #   [sinks.DBMSSQL_json_out.encoding]
+#   codec = "json"
+
+# [sinks.SDBL_json_out]
+# type = "file"
+# inputs = [ "SDBL" ]
+# compression = "none"
+# path = "/tmp/SDBL/%Y-%m-%d %H:%M.json"
+
+  
+#   [sinks.SDBL_json_out.encoding]
 #   codec = "json"
