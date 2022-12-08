@@ -42,11 +42,12 @@
 Для запуска разбора технологического журнала достаточно:
 - Подготовить базу данных clickhouse
     - Создать базу 
-    - Создать таблицы скриптами из папки [sql_scripts](https://github.com/Segate-ekb/vector/tree/main/sql_scripts)
+    - Создать таблицы скриптами из папки [sql_scripts](/sql_scripts)
+- Переименовать [docker-compose.yaml.example](/docker-compose.yaml.example) в **docker-compose.yaml**, и [techJournal.env.example](/techJournal.env.example) в **techJournal.env**  
 - Отредактировать файл techJournal.env
     - указать необходимые события которые вы планируете хранить
     - Задать параметры авторизации в Clickhouse
-- В файле [docker-compose.yaml](https://github.com/Segate-ekb/vector/tree/main/sql_scripts) указать в Volume параметры подключения к папке с логами.   
+- В файле [docker-compose.yaml](/docker-compose.yaml.example) указать в Volume параметры подключения к папке с логами.   
 - docker-compose up -d    
 
 ## Планы на ближайшее время
