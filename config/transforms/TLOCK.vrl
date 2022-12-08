@@ -27,7 +27,7 @@ Regions, err = parse_regex(.Content, r'Regions=(?P<Regions>[^,]*)', numeric_grou
 . = merge(., Regions)
 Locks, err = parse_regex(.Content, r'Locks=(?P<Locks>[^,]*)', numeric_groups: false)                                          
 . = merge(., Locks)
-WaitConnections, err = parse_regex(.Content, r'WaitConnections=(?P<WaitConnections>[^,]*)', numeric_groups: false)                                          
+WaitConnections, err = parse_regex(.Content, r'WaitConnections=(?P<WaitConnections>[^,\n\r]*)', numeric_groups: false)                                          
 . = merge(., WaitConnections)
 Escalating, err = parse_regex(.Content, r'(E|e)scalating=(?P<Escalating>[^,]*)', numeric_groups: false)                                          
 . = merge(., Escalating)

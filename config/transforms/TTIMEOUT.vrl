@@ -23,7 +23,7 @@ DBMS, err = parse_regex(.Content, r'DBMS=(?P<DBMS>[^,]*)', numeric_groups: false
 . = merge(., DBMS)
 DataBase, err = parse_regex(.Content, r'DataBase=(?P<DataBase>[^,]*)', numeric_groups: false)                                          
 . = merge(., DataBase)
-WaitConnections, err = parse_regex(.Content, r'WaitConnections=(?P<WaitConnections>[^,]*)', numeric_groups: false)                                          
+WaitConnections, err = parse_regex(.Content, r'WaitConnections=(?P<WaitConnections>[^,\n\r]*)', numeric_groups: false)                                          
 . = merge(., WaitConnections)
 Durationus, err = parse_regex(.Content, r'(D|d)urationus=(?P<Durationus>\d*)', numeric_groups: false)                                          
 . = merge(., Durationus)
