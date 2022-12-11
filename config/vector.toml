@@ -7,7 +7,7 @@
   multiline.timeout_ms = 1000
   multiline.mode = "halt_before"
   multiline.start_pattern = ''
-  multiline.condition_pattern = '[0-5]{1}\d:[0-5]{1}\d.\d{6}-\d*,([a-zA-Z][^o][^n][^t][^e][^x][^t])'
+  multiline.condition_pattern = '[0-5]{1}\d:[0-5]{1}\d.\d{6}'
 
 # Базовая трансформация, выделение вида события, длительности и тд. 
 [transforms.remap_logs]
@@ -15,9 +15,26 @@ inputs = ["input_logs"]
 type = "remap"
 file = "/etc/vector/transforms/parseLog.vrl"
 
+# Если мы получили событие Context Добавим его к основному событию.
+[transforms.add_context_event]
+inputs = ["remap_logs"]
+type = "reduce"
+starts_when = { type = "vrl", source = '''.Event != "Context"''' }
+
+  [transforms.add_context_event.merge_strategies]
+  DateTime = "discard"
+  duration = "discard" 
+  Event = "discard"
+  Level = "discard"
+  ProcessID = "discard"
+  Content = "concat_newline"
+  message = "concat_newline"
+  file = "discard"
+
+
 # Отфильтруем только требуемые события
 [transforms.filter_EVENT_LIST] 
-  inputs = ["remap_logs"]
+  inputs = ["add_context_event"]
   type = "filter"
   condition = '''contains(${EVENT_LIST}, to_string!(.Event))'''
 
@@ -103,13 +120,16 @@ inputs = ["filter_TDEADLOCK"]
 type = "remap"
 file = "/etc/vector/transforms/TDEADLOCK.vrl"
 
+# Событие QERR
+[transforms.filter_QERR] 
+  inputs = ["filter_EVENT_LIST"]
+  type = "filter"
+  condition = '.Event == "QERR"'
 
-# Все остальные события То что еще не обрабатывается но тоже можно заливать куда-то сырыми данными.
-# [transforms.filter_other] 
-#   inputs = ["filter_EVENT_LIST"]
-#   type = "filter"
-#   condition = '.Event != "EXCPCNTX" && .Event != "EXCP" && .Event != "DBMSSQL"'
-
+[transforms.QERR]
+inputs = ["filter_QERR"]
+type = "remap"
+file = "/etc/vector/transforms/QERR.vrl"
 
 ######################## СЕКЦИЯ ВЫВОДА ДАННЫХ ###################################
 # В данной секции описываются все используемые методы вывода обработанных логов #
@@ -224,6 +244,21 @@ file = "/etc/vector/transforms/TDEADLOCK.vrl"
  batch.timeout_secs = 5
  acknowledgements.enabled = true
 
+# Событие QERR 
+[sinks.cl_QERR]
+ type = "clickhouse"
+ inputs = ["QERR"]
+ endpoint = '''${CH_SERVER}'''
+ auth.strategy = "basic"
+ auth.user = '''${CH_USER}'''
+ auth.password = '''${CH_PASSWORD}'''
+ database = '''${CH_DATABASE}'''
+ table = '''qerr'''
+ skip_unknown_fields = true
+ batch.max_events = 10000
+ batch.timeout_secs = 5
+ acknowledgements.enabled = true
+
 
 ##################################################
 # Пример вывода результата в файл, в формате JSON#
@@ -267,4 +302,14 @@ file = "/etc/vector/transforms/TDEADLOCK.vrl"
 
   
 #   [sinks.SDBL_json_out.encoding]
+#   codec = "json"
+
+# [sinks.QERR_json_out]
+# type = "file"
+# inputs = [ "QERR" ]
+# compression = "none"
+# path = "/tmp/QERR/%Y-%m-%d %H:%M.json"
+
+  
+#   [sinks.QERR_json_out.encoding]
 #   codec = "json"
