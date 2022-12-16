@@ -131,6 +131,28 @@ inputs = ["filter_QERR"]
 type = "remap"
 file = "/etc/vector/transforms/QERR.vrl"
 
+# Событие CALL
+[transforms.filter_CALL] 
+  inputs = ["filter_EVENT_LIST"]
+  type = "filter"
+  condition = '.Event == "CALL"'
+
+[transforms.CALL]
+inputs = ["filter_CALL"]
+type = "remap"
+file = "/etc/vector/transforms/CALL.vrl"
+
+# Событие SCALL
+[transforms.filter_SCALL] 
+  inputs = ["filter_EVENT_LIST"]
+  type = "filter"
+  condition = '.Event == "SCALL"'
+
+[transforms.SCALL]
+inputs = ["filter_SCALL"]
+type = "remap"
+file = "/etc/vector/transforms/SCALL.vrl"
+
 ######################## СЕКЦИЯ ВЫВОДА ДАННЫХ ###################################
 # В данной секции описываются все используемые методы вывода обработанных логов #
 #################################################################################
@@ -254,6 +276,36 @@ file = "/etc/vector/transforms/QERR.vrl"
  auth.password = '''${CH_PASSWORD}'''
  database = '''${CH_DATABASE}'''
  table = '''qerr'''
+ skip_unknown_fields = true
+ batch.max_events = 10000
+ batch.timeout_secs = 5
+ acknowledgements.enabled = true
+
+ # Событие CALL 
+[sinks.cl_CALL]
+ type = "clickhouse"
+ inputs = ["CALL"]
+ endpoint = '''${CH_SERVER}'''
+ auth.strategy = "basic"
+ auth.user = '''${CH_USER}'''
+ auth.password = '''${CH_PASSWORD}'''
+ database = '''${CH_DATABASE}'''
+ table = '''call'''
+ skip_unknown_fields = true
+ batch.max_events = 10000
+ batch.timeout_secs = 5
+ acknowledgements.enabled = true
+
+# Событие SCALL 
+[sinks.cl_CALL]
+ type = "clickhouse"
+ inputs = ["SCALL"]
+ endpoint = '''${CH_SERVER}'''
+ auth.strategy = "basic"
+ auth.user = '''${CH_USER}'''
+ auth.password = '''${CH_PASSWORD}'''
+ database = '''${CH_DATABASE}'''
+ table = '''scall'''
  skip_unknown_fields = true
  batch.max_events = 10000
  batch.timeout_secs = 5
