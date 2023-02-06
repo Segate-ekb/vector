@@ -17,9 +17,9 @@ SessionID, err = parse_regex(.Content, r'SessionID=(?P<SessionID>\d*)', numeric_
 . = merge(., SessionID)
 User, err = parse_regex(.Content, r'Usr=(?P<User>[^,]*)', numeric_groups: false)                                          
 . = merge(., User)
-Description, err = parse_regex(.Content, r'Descr=(?P<Description>(.|\n|\r)*?)(,[a-zA-Z]+=|$)', numeric_groups: false)
+Description, err = parse_regex(.Content, r'Descr=(?P<Description>(.|\n|\r)*?)(,[a-zA-Z]+=|$|[0-5]{1}\d:[0-5]{1}\d.\d{6})', numeric_groups: false)
 . = merge(., Description)
-Query, err = parse_regex(.Content, r'Query=(?P<Query>(.|\n|\r)*?)(,[a-zA-Z]+=|$)', numeric_groups: false)                                          
+Query, err = parse_regex(.Content, r'Query=(?P<Query>(.|\n|\r)*?)(,[a-zA-Z]+=|$|[0-5]{1}\d:[0-5]{1}\d.\d{6})', numeric_groups: false)                                          
 . = merge(., Query)
 
 .err = err

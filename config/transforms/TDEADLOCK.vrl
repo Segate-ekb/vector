@@ -23,11 +23,11 @@ DBMS, err = parse_regex(.Content, r'DBMS=(?P<DBMS>[^,]*)', numeric_groups: false
 . = merge(., DBMS)
 DataBase, err = parse_regex(.Content, r'DataBase=(?P<DataBase>[^,]*)', numeric_groups: false)                                          
 . = merge(., DataBase)
-DeadlockConnectionIntersections, err = parse_regex(.Content, r'DeadlockConnectionIntersections=(?P<DeadlockConnectionIntersections>(.|\n|\r)*?)(,[a-zA-Z]+=|$)', numeric_groups: false)                                          
+DeadlockConnectionIntersections, err = parse_regex(.Content, r'DeadlockConnectionIntersections=(?P<DeadlockConnectionIntersections>(.|\n|\r)*?)(,[a-zA-Z]+=|$|[0-5]{1}\d:[0-5]{1}\d.\d{6})', numeric_groups: false)                                          
 . = merge(., DeadlockConnectionIntersections)
 Durationus, err = parse_regex(.Content, r'(D|d)urationus=(?P<Durationus>\d*)', numeric_groups: false)                                          
 . = merge(., Durationus)
-Context, err = parse_regex(.Content, r'Context=(?P<Context>(.|\n|\r)*?)(,[a-zA-Z]+=|$)', numeric_groups: false)                                          
+Context, err = parse_regex(.Content, r'Context=(?P<Context>(.|\n|\r)*?)(,[a-zA-Z]+=|$|[0-5]{1}\d:[0-5]{1}\d.\d{6})', numeric_groups: false)                                          
 . = merge(., Context)
 
 

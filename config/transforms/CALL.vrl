@@ -43,5 +43,5 @@ OutBytes, err = parse_regex(.Content, r'OutBytes=(?P<OutBytes>\d*)', numeric_gro
 . = merge(., OutBytes)
 CpuTime, err = parse_regex(.Content, r'CpuTime=(?P<CpuTime>\d*)', numeric_groups: false)                                          
 . = merge(., CpuTime)
-Context, err = parse_regex(.Content, r'Context=(?P<Context>(.|\n|\r)*?)(,[a-zA-Z]+=|$)', numeric_groups: false)                                          
+Context, err = parse_regex(.Content, r'Context=(?P<Context>(.|\n|\r)*?)(,[a-zA-Z]+=|$|[0-5]{1}\d:[0-5]{1}\d.\d{6})', numeric_groups: false)                                          
 . = merge(., Context)
